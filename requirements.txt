@@ -3,5 +3,4 @@ numpy
 matplotlib
 nose
 scipy
-pandas
 
