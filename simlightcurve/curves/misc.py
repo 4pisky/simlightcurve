@@ -1,79 +1,45 @@
 from __future__ import absolute_import
-import math
 import numpy as np
-from simlightcurve.lightcurve import LightcurveBase
+from astropy.modeling import (
+    FittableModel, Parameter, format_input)
+from astropy.modeling.models import custom_model_1d
 
-
+@custom_model_1d
 def logistic_rise(t_offset, loc=0.0, scale=1.0):
     return 1.0 / (1.0 + np.exp(-(t_offset - loc) / scale))
 
+@custom_model_1d
 def logistic_drop(t_offset, loc=0.0, scale=1.0):
     return 1.0 - logistic_rise(t_offset, loc, scale)
 
+@custom_model_1d
 def softplus_drop(t_offset, loc=0.0, scale=1.0):
     return 1.0 / (1.0 + np.exp(-(t_offset - loc) / scale))
 
 
-
-class Null(LightcurveBase):
-    """
-    Returns zero flux at all times.
-    """
-    def __init__(self):
-        super(Null, self).__init__()
-
-    def _flux(self, t_offset):
-        return np.zeros_like(t_offset)
-
-    @property
-    def t_offset_min(self):
-        return 0.
-
-    @property
-    def t_offset_max(self):
-        return 0.
-
-    def peak_flux(self):
-        return 0.
-
-    def peak_t_offset(self):
-        return 0
-
-    def find_rise_t_offset(self, threshold):
-        return None
-
-
-
-class NegativeQuadratic(LightcurveBase):
+class NegativeQuadratic(FittableModel):
     """
     Very simple example, used for testing purposes.
     """
 
-    def __init__(self, peak):
-        super(NegativeQuadratic, self).__init__()
-        self._peak_flux = peak
-        self.root = math.sqrt(peak)
+    inputs=('t_offset',)
+    outputs=('flux',)
+    amplitude=Parameter()
 
-    def _flux(self, t_offset):
-        return self._peak_flux - t_offset ** 2
+    @staticmethod
+    def eval(t_offset, amplitude):
+        if np.ndim(t_offset)==0:
+            t_offset=np.asarray(t_offset,dtype=np.float).reshape((1,))
+        root = np.sqrt(amplitude)
+        t_valid = (t_offset > -root)& (t_offset < root)
+        # print "t_offset", t_offset
+        # print "T_valid", t_valid
+        vals = np.zeros_like(t_offset)
+        vals[t_valid] = amplitude - t_offset[t_valid]**2
+        return vals
+        # return amplitude - t_offset**2
 
-    @property
-    def t_offset_min(self):
-        return -self.root
 
-    @property
-    def t_offset_max(self):
-        return self.root
-
-    @property
-    def peak_flux(self):
-        return self._peak_flux
-
-    @property
-    def peak_t_offset(self):
-        return 0.
-
-    def find_rise_t_offset(self, threshold):
-        if threshold>self._peak_flux:
-            return None
-        return -(math.sqrt(self._peak_flux - threshold))
+    @format_input
+    def __call__(self, t_offset):
+        return self.eval(t_offset, *self.param_sets)

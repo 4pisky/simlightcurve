@@ -1,146 +1,145 @@
 from __future__ import absolute_import, division
 import numpy as np
-from simlightcurve.lightcurve import (DictReprMixin, LightcurveBase,
-                                      PeakSolverMixin, RiseTimeBisectMixin)
+from astropy.modeling import FittableModel, Parameter, format_input
 
 
-class Powerlaw(PeakSolverMixin,RiseTimeBisectMixin,LightcurveBase,
-               DictReprMixin):
-    def __init__(self, init_amp, init_alpha, breaks=None):
-        """
-        Represents a power-law curve, with optional power-breaks.
 
-        The curve is defined as
+def _calculate_powerlaw_break_amplitudes(init_amp, alpha_one,
+                                         t_offset_min,
+                                         breaks=None):
+    """
+    Calculate the per-stage amplitudes for each leg of a broken powerlaw curve.
 
-            init_amp * (t_offset)**init_alpha
+    Args:
+        init_amp (float): Initial Amplitude
+        init_alpha (float): Initial Power-law index
+        breaks (dict): Any power-law breaks.
+            Dict maps 't_offset of break' -> 'index after break'
+    """
+    if init_amp == 0:
+        raise ValueError("init_amp=0 always results in a flat lightcurve."
+                         "Use the Null lightcurve if that's intended.")
 
-        in the no-breaks case. NB:
+    # Construct our fence-posts
+    bounds = [t_offset_min]
+    alphas = [float(alpha_one)]
+    if breaks is not None:
+        for break_posn in sorted(breaks.keys()):
+            bounds.append(float(break_posn))
+            alphas.append(float(breaks[break_posn]))
+    bounds.append(float('inf'))
 
-            base = t
-
-        We wary of using an init_alpha<0, since this results in an asymptote at
-        t=0.
-
-
-        Args:
-            init_amp (float): Initial Amplitude
-            init_alpha (float): Initial Power-law index
-            breaks (dict): Any power-law breaks.
-                Dict maps 't_offset of break' -> 'index after break'
-
-        NB  The curve will always begin at the origin, because maths.
-        (Cannot raise a negative number to a fractional power unless you
-        get all complex. Also 0.**Y == 0. )
-        """
-        super(Powerlaw, self).__init__()
-
-        self._peak_solver_x0 = 0.
+    # Calculate new amplitude to match new and old power-law values
+    # at each break:
+    amps = [init_amp]
+    for idx in range(1, len(alphas)):
+        value_at_break = (amps[-1]
+                          * np.power(bounds[idx],
+                                     alphas[idx - 1]))
+        amps.append(
+            value_at_break / np.power(bounds[idx],
+                                      alphas[idx])
+        )
+    return bounds, alphas, amps
 
 
-        if init_amp == 0:
-            raise ValueError("init_amp=0 always results in a flat lightcurve."
-                             "Use the Null lightcurve if that's intended.")
+def _evaluate_broken_powerlaw(t_offset, bounds, alphas, amps):
+    result = np.zeros_like(t_offset)
+    for idx in range(0, (len(bounds) - 1)):
+        lower = bounds[idx]
+        upper = bounds[idx + 1]
+        t_range = np.logical_and(t_offset >= lower , t_offset < upper)
+        result[t_range] = (
+            amps[idx] * np.power(t_offset[t_range], alphas[idx])
+        )
+    return result
 
-        # Construct our fence-posts
-        self.bounds = [0.]
-        self.alphas = [float(init_alpha)]
-        if breaks is not None:
-            for break_posn in sorted(breaks.keys()):
-                self.bounds.append(float(break_posn))
-                self.alphas.append(float(breaks[break_posn]))
-        self.bounds.append(float('inf'))
 
-        # Calculate new amplitude to match new and old power-law values
-        # at each break:
-        self.amps = [init_amp]
-        for idx in range(1, len(self.alphas)):
-            value_at_break = (self.amps[-1]
-                              * np.power(self.bounds[idx],
-                                         self.alphas[idx - 1]))
-            self.amps.append(
-                value_at_break / np.power(self.bounds[idx],
-                                          self.alphas[idx])
-            )
+class Powerlaw(FittableModel):
+    """
+    Represents a simple power-law curve
 
-    def _flux(self, t_offset):
+    The curve is defined as
+
+        amplitude * (t_offset)**alpha
+
+    We wary of using an init_alpha<0, since this results in an asymptote at
+    t=0.
+
+    NB  The curve will always begin at the origin, because maths.
+    (Cannot raise a negative number to a fractional power unless you
+    deal with complex numbers. Also 0.**Y == 0. )
+    """
+    inputs=('t_offset',)
+    outputs=('flux',)
+
+    init_amp = Parameter()
+    alpha_one = Parameter()
+    t_offset_min = Parameter(default=0.)
+
+    @staticmethod
+    def eval(t_offset,
+             init_amp,
+             alpha_one,
+             t_offset_min):
+        if np.ndim(t_offset)==0:
+            t_offset=np.asarray(t_offset,dtype=np.float).reshape((1,))
         result = np.zeros_like(t_offset)
-        for idx in range(0, (len(self.bounds) - 1)):
-            lower = self.bounds[idx]
-            upper = self.bounds[idx + 1]
-            t_range = (t_offset > lower) & (t_offset <= upper)
-            result[t_range] = (
-                self.amps[idx] * np.power(t_offset[t_range], self.alphas[idx])
-            )
+        t_valid = t_offset >= t_offset_min
+        result[t_valid] = ( init_amp* np.power(t_offset[t_valid], alpha_one))
         return result
 
-    @property
-    def t_offset_min(self):
-        return 0.
-
-    @property
-    def t_offset_max(self):
-        #We can do better, if necessary... but this is fine for now.
-        return float('inf')
+    @format_input
+    def __call__(self, t_offset):
+        return self.eval(t_offset, *self.param_sets)
 
 
+class SingleBreakPowerlaw(FittableModel):
+    """
+    Represents an power-law curve with a single index-break
 
-class OffsetPowerlaw(PeakSolverMixin,RiseTimeBisectMixin,LightcurveBase,
-                     DictReprMixin):
-    def __init__(self, init_amp, init_alpha, flux_offset,
-                 breaks=None):
-        """
-        Represents a shifted-by-one power-law curve, with optional power-breaks.
+    The curve is defined as
 
-        This curve is defined as
+        init_amplitude * (t_offset)**alpha_one
 
-            init_amp * (t_offset + 1)**init_alpha + flux_offset
+    until the location of the first index-break, then
+        matched_amplitude * (t_offset)**alpha_two
 
-        in the no-breaks case. NB:
-            base = t+1
+    where matched_amplitude is calculated to ensure the curves meet at the
+    power-break location.
 
-        We then add a flux_offset to raise or lower the intercept, which becomes
+    We wary of using an init_alpha<0, since this results in an asymptote at
+    t=0.
 
-            y(0) = init_amp + flux_offset
+    NB  The curve will always begin at the origin, because maths.
+    (Cannot raise a negative number to a fractional power unless you
+    deal with complex numbers. Also 0.**Y == 0. )
+    """
 
-        This makes it much easier to reason about the lightcurve's
-        characteristics for small t (no asymptotic behaviour),
-        although the slope will be different to a zero-origin powerlaw at
-        small t. As a consequence, any breaks in the powerlaw at small t will
-        result in significantly different amplitudes later on (compared to the
-        regular powerlaw), due to the chain-effect of the amplitude matching at
-        break-points.
+    inputs=('t_offset',)
+    outputs=('flux',)
 
-        Args:
-            init_amp (float): Initial Amplitude
-            init_alpha (float): Initial Power-law index
-            flux_offset(float): Constant added to resulting flux values.
-            break_alpha_tuples (dict): Any power-law breaks.
-                Dict maps 't_offset of break' -> 'index after break'
+    init_amp = Parameter()
+    break_t_offset = Parameter()
+    alpha_one = Parameter()
+    alpha_two = Parameter()
+    t_offset_min = Parameter(default=0.)
 
-        NB  The curve will always begin at the origin, because maths.
-        (Cannot raise a negative number to a fractional power unless you
-        get all complex. Also 0.**Y == 0. )
-        """
-        super(OffsetPowerlaw, self).__init__()
+    @staticmethod
+    def eval(t_offset,
+             init_amp,
+             break_t_offset,
+             alpha_one,
+             alpha_two,
+             t_offset_min
+             ):
+        if np.ndim(t_offset)==0:
+            t_offset=np.asarray(t_offset,dtype=np.float).reshape((1,))
+        bounds, alphas, amps = _calculate_powerlaw_break_amplitudes(
+            init_amp,alpha_one,t_offset_min,
+            breaks={break_t_offset[0]:alpha_two[0]})
+        return _evaluate_broken_powerlaw(t_offset, bounds,alphas,amps)
 
-        offset_breaks=None
-        if breaks is not None:
-            offset_breaks = { k + 1.0: v for k,v in breaks.iteritems()}
-
-        self._wrapped_powerlaw = Powerlaw(init_amp=init_amp,
-                                          init_alpha=init_alpha,
-                                          breaks=offset_breaks)
-        self._peak_solver_x0 = 0.
-        self._flux_offset = flux_offset
-
-    def _flux(self, t_offset):
-        return self._wrapped_powerlaw._flux(t_offset+1)+self._flux_offset
-
-    @property
-    def t_offset_min(self):
-        return 0.
-
-    @property
-    def t_offset_max(self):
-        #We can do better, if necessary... but this is fine for now.
-        return float('inf')
+    @format_input
+    def __call__(self, t_offset):
+        return self.eval(t_offset, *self.param_sets)

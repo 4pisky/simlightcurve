@@ -1,4 +1,6 @@
 
+import simlightcurve
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -29,7 +31,7 @@ copyright = u'2015, Tim Staley'
 
 
 # The short X.Y version.
-version = '0.1'
+version = simlightcurve._nominal_version
 # The full version, including alpha/beta/rc tags.
 release = version
 

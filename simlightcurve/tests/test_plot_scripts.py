@@ -3,6 +3,7 @@ from unittest import TestCase
 import tempfile
 import os
 import sys
+import unittest
 
 
 class TestExamples(TestCase):

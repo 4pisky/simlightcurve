@@ -4,9 +4,9 @@
 =========================================
 
 
-:mod:`simlightcurve.lightcurve`
+:mod:`simlightcurve.solvers`
 ---------------------------------------------------------------
 
-.. automodule:: simlightcurve.lightcurve
+.. automodule:: simlightcurve.solvers
     :members:
     :undoc-members:

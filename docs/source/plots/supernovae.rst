@@ -10,7 +10,7 @@ Optical
 Make use of the quadratically-modulated sigmoidal rise / exponential decay, cf
 Karpenka 2012 and references therein:
 
-Class: :py:class:`~simlightcurve.curves.modsigmoid.NormedModSigmoidExp`
+Class: :py:class:`~simlightcurve.curves.modsigmoidexp.ModSigmoidExp`
 
 .. plot:: pyplots/plot_modsigmoidexp.py
 

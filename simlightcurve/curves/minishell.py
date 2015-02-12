@@ -1,46 +1,52 @@
 from __future__ import absolute_import
 import numpy as np
-import scipy.optimize
-from simlightcurve.lightcurve import (DictReprMixin,LightcurveBase,
-                                      PeakSolverMixin,RiseTimeBisectMixin)
 
+from astropy.modeling import FittableModel, Parameter, format_input
 
-class Minishell(PeakSolverMixin, RiseTimeBisectMixin, LightcurveBase,
-            DictReprMixin):
+class Minishell(FittableModel):
     """
     Supernova radio-lightcurve model (Type-II).
 
-    Following VAST memo #3, Ryder 2010
-    ( http://www.physics.usyd.edu.au/sifa/vast/uploads/Main/vast_memo3.pdf )
+    CF
+    K. Weiler et al, 2002:
+    http://www.annualreviews.org/doi/abs/10.1146/annurev.astro.40.060401.093744
+    and VAST memo #3, Ryder 2010:
+    http://www.physics.usyd.edu.au/sifa/vast/uploads/Main/vast_memo3.pdf
+
+    See Weiler et al for some typical parameter values.
     """
+    inputs=('t_offset',)
+    outputs=('flux',)
 
-    def __init__(self, k1, k2, k3, beta, delta1, delta2,
-                 peak_search_t_start=1e7):
-        super(Minishell,self).__init__()
-        self.k1 = k1
-        self.k2 = k2
-        self.k3 = k3
-        self.beta = beta
-        self.delta1 = delta1
-        self.delta2 = delta2
+    k1 = Parameter()
+    k2 = Parameter()
+    k3 = Parameter()
+    beta = Parameter()
+    delta1 = Parameter()
+    delta2 = Parameter()
 
-        self._peak_solver_x0 = peak_search_t_start
-
-    def _flux(self, t_offset):
-        t_off_days = t_offset / (24*3600.)
-        factor_evolve = self.k1 * np.power(t_off_days, self.beta)
-        tau_csm_homog = self.k2 * np.power(t_off_days, self.delta1)
+    @staticmethod
+    def _curve(t_offset,k1,k2,k3,beta,delta1,delta2):
+        """
+        Internal function that is only valid at t > 0
+        """
+        factor_evolve = k1 * np.power(t_offset, beta)
+        tau_csm_homog = k2 * np.power(t_offset, delta1)
         factor_tau_external = np.exp(-tau_csm_homog)
-        tau_csm_clump = self.k3 * np.power(t_off_days, self.delta2)
+        tau_csm_clump = k3 * np.power(t_offset, delta2)
         factor_tau_csm_clump = (1 - np.exp(-tau_csm_clump) ) / tau_csm_clump
         return factor_evolve*factor_tau_external*factor_tau_csm_clump
 
-    @property
-    def t_offset_min(self):
-        return 0.
+    @staticmethod
+    def eval(t_offset,k1,k2,k3,beta,delta1,delta2):
+        """
+        Wraps _curve function to only process values at t > 0
+        """
+        vals = np.zeros_like(t_offset,dtype=np.float)
+        t_valid = ( t_offset > 0 )
+        vals[t_valid] = Minishell._curve(t_offset[t_valid],k1,k2,k3,beta,delta1,delta2)
+        return vals
 
-    @property
-    def t_offset_max(self):
-        #We can do better, if necessary... but this is fine for now.
-        return float('inf')
-
+    @format_input
+    def __call__(self, t_offset):
+        return self.eval(t_offset, *self.param_sets)
