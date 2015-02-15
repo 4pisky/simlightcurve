@@ -70,28 +70,31 @@ class Powerlaw(FittableModel):
     (Cannot raise a negative number to a fractional power unless you
     deal with complex numbers. Also 0.**Y == 0. )
     """
-    inputs=('t_offset',)
+    inputs=('t',)
     outputs=('flux',)
 
     init_amp = Parameter()
     alpha_one = Parameter()
     t_offset_min = Parameter(default=0.)
+    t0 = Parameter(default=0.)
 
     @staticmethod
-    def eval(t_offset,
+    def eval(t,
              init_amp,
              alpha_one,
-             t_offset_min):
-        if np.ndim(t_offset)==0:
-            t_offset=np.asarray(t_offset,dtype=np.float).reshape((1,))
+             t_offset_min,
+             t0):
+        if np.ndim(t)==0:
+            t=np.asarray(t,dtype=np.float).reshape((1,))
+        t_offset = t-t0
         result = np.zeros_like(t_offset)
         t_valid = t_offset >= t_offset_min
         result[t_valid] = ( init_amp* np.power(t_offset[t_valid], alpha_one))
         return result
 
     @format_input
-    def __call__(self, t_offset):
-        return self.eval(t_offset, *self.param_sets)
+    def __call__(self, t):
+        return self.eval(t, *self.param_sets)
 
 
 class SingleBreakPowerlaw(FittableModel):
@@ -116,7 +119,7 @@ class SingleBreakPowerlaw(FittableModel):
     deal with complex numbers. Also 0.**Y == 0. )
     """
 
-    inputs=('t_offset',)
+    inputs=('t',)
     outputs=('flux',)
 
     init_amp = Parameter()
@@ -124,22 +127,25 @@ class SingleBreakPowerlaw(FittableModel):
     alpha_one = Parameter()
     alpha_two = Parameter()
     t_offset_min = Parameter(default=0.)
+    t0 = Parameter(default=0.)
 
     @staticmethod
-    def eval(t_offset,
+    def eval(t,
              init_amp,
              break_t_offset,
              alpha_one,
              alpha_two,
-             t_offset_min
+             t_offset_min,
+             t0
              ):
-        if np.ndim(t_offset)==0:
-            t_offset=np.asarray(t_offset,dtype=np.float).reshape((1,))
+        if np.ndim(t)==0:
+            t=np.asarray(t,dtype=np.float).reshape((1,))
+        t_offset = t-t0
         bounds, alphas, amps = _calculate_powerlaw_break_amplitudes(
             init_amp,alpha_one,t_offset_min,
             breaks={break_t_offset[0]:alpha_two[0]})
         return _evaluate_broken_powerlaw(t_offset, bounds,alphas,amps)
 
     @format_input
-    def __call__(self, t_offset):
-        return self.eval(t_offset, *self.param_sets)
+    def __call__(self, t):
+        return self.eval(t, *self.param_sets)

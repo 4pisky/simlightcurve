@@ -10,12 +10,13 @@ class Minishell(FittableModel):
     CF
     K. Weiler et al, 2002:
     http://www.annualreviews.org/doi/abs/10.1146/annurev.astro.40.060401.093744
+
     and VAST memo #3, Ryder 2010:
     http://www.physics.usyd.edu.au/sifa/vast/uploads/Main/vast_memo3.pdf
 
     See Weiler et al for some typical parameter values.
     """
-    inputs=('t_offset',)
+    inputs=('t',)
     outputs=('flux',)
 
     k1 = Parameter()
@@ -24,6 +25,7 @@ class Minishell(FittableModel):
     beta = Parameter()
     delta1 = Parameter()
     delta2 = Parameter()
+    t0 = Parameter(default=0.)
 
     @staticmethod
     def _curve(t_offset,k1,k2,k3,beta,delta1,delta2):
@@ -38,15 +40,16 @@ class Minishell(FittableModel):
         return factor_evolve*factor_tau_external*factor_tau_csm_clump
 
     @staticmethod
-    def eval(t_offset,k1,k2,k3,beta,delta1,delta2):
+    def eval(t,k1,k2,k3,beta,delta1,delta2,t0):
         """
         Wraps _curve function to only process values at t > 0
         """
+        t_offset = t-t0
         vals = np.zeros_like(t_offset,dtype=np.float)
         t_valid = ( t_offset > 0 )
         vals[t_valid] = Minishell._curve(t_offset[t_valid],k1,k2,k3,beta,delta1,delta2)
         return vals
 
     @format_input
-    def __call__(self, t_offset):
-        return self.eval(t_offset, *self.param_sets)
+    def __call__(self, t):
+        return self.eval(t, *self.param_sets)

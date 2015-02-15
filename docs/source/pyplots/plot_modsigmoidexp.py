@@ -23,6 +23,7 @@ sn1 = Hump(
             a=1, b=3e-10,
             t1_minus_t0=t1_offset,
             rise_tau=rise_tau, decay_tau = decay_tau,
+            # t0 = 0.7*decay_tau
             )
 
 tsteps = np.arange(-8*rise_tau, 8*decay_tau, 30)

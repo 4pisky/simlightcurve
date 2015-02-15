@@ -23,6 +23,7 @@ unbroken_pl = curves.Powerlaw(init_amp=1,
 offset_pl = curves.Powerlaw(init_amp=1,
                             alpha_one=-0.5,
                             t_offset_min=t_min+1.0,
+                            t0=-10
                             )
 
 broken_pl = curves.SingleBreakPowerlaw(init_amp=.1,
@@ -34,7 +35,7 @@ broken_pl = curves.SingleBreakPowerlaw(init_amp=.1,
 
 
 
-tsteps = np.linspace(t_min, decay_tau*2, 500, dtype=np.float)
+tsteps = np.linspace(t_min, decay_tau, 1e5, dtype=np.float)
 
 
 fig, axes = plt.subplots(2,1)
@@ -63,8 +64,8 @@ ax.plot(tsteps, broken_pl(tsteps), label='Broken powerlaw')
 ax.plot(tsteps, offset_pl(tsteps), label='Offset powerlaw')
 # ax.set_yscale('log')
 # ax.set_xscale('log')
-ax.set_ylim(0.001,.1)
+ax.set_ylim(0.001,.05)
 ax.legend()
-ax.set_xlim(t_min, 0.8*decay_tau)
+ax.set_xlim(t_min, 0.3*decay_tau)
 
 plt.gcf().tight_layout()

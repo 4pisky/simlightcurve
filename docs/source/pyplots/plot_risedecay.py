@@ -25,12 +25,14 @@ gred = curves.GaussExp(
             decay_tau=decay_tau,
             amplitude=1.0)
 
-# grpld = curves.GaussPowerlaw(rise_tau=rise_tau,
-#             init_alpha=-.005,
-#             amplitude=1.0,
-#             breaks={0.1*decay_tau:-.1,
-#                     0.5*decay_tau:-.5}
-# )
+grpld = curves.GaussPowerlaw(
+    amplitude = 1.0,
+    rise_tau=rise_tau,
+    decay_alpha=-1.5,
+    decay_offset=decay_tau,
+    # breaks={0.1*decay_tau:-.1,
+    #         0.5*decay_tau:-.5}
+)
 
 tsteps = np.arange(-rise_tau*3, decay_tau*5, 30)
 
@@ -44,7 +46,7 @@ ax.set_xlabel('Time')
 ax.set_ylabel('Flux')
 ax.plot(tsteps, fred(tsteps), label='FRED', ls='--')
 ax.plot(tsteps, gred(tsteps), label='GRED', ls='--')
-# ax.plot(tsteps, grpld(tsteps), label='GRPLD')
+ax.plot(tsteps, grpld(tsteps), label='GRPLD')
 # ax.set_xscale('log')
 # ax.set_yscale('log')
 ax.set_ylim(1e-5,1.001)

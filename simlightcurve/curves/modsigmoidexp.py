@@ -13,7 +13,7 @@ class ModSigmoidExp(FittableModel):
     Following Karpenka et al 2012; Eq 1.
     ( http://adsabs.harvard.edu/abs/2013MNRAS.429.1278K )
     """
-    inputs=('t_offset',)
+    inputs=('t',)
     outputs=('flux',)
     
     a = Parameter()
@@ -21,15 +21,18 @@ class ModSigmoidExp(FittableModel):
     t1_minus_t0 = Parameter()
     rise_tau = Parameter()
     decay_tau = Parameter()
+    t0 = Parameter(default=0.)
 
 
     @staticmethod
-    def eval(t_offset,
+    def eval(t,
              a,
              b,
              t1_minus_t0,
              rise_tau,
-             decay_tau):
+             decay_tau,
+             t0):
+        t_offset = t - t0
         t_minus_t1 = t_offset - t1_minus_t0
         b_fac = 1 + b * t_minus_t1*t_minus_t1
         #NB imported 'truediv' behaviour, so OK even if t0, decay both integers.
@@ -38,5 +41,5 @@ class ModSigmoidExp(FittableModel):
         return a*b_fac*exp_num/exp_denom
 
     @format_input
-    def __call__(self, t_offset):
-        return self.eval(t_offset, *self.param_sets)
+    def __call__(self, t):
+        return self.eval(t, *self.param_sets)
