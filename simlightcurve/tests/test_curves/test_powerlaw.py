@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from unittest import TestCase
 import numpy as np
 
-from simlightcurve.solvers import find_peak, find_rise_t_offset
+from simlightcurve.solvers import find_peak, find_rise_t
 from simlightcurve.curves import (
     Powerlaw,
     SingleBreakPowerlaw,
@@ -65,7 +65,7 @@ class TestPowerlawValueSolvers(TestCase):
 
     def test_find_rise_t_offset(self):
         lc = self.lc
-        half_rise = find_rise_t_offset(lc, 0.5, t_min=0, t_max=1)
+        half_rise = find_rise_t(lc, 0.5, t_min=0, t_max=1)
         self.assertAlmostEqual(half_rise,0.5)
 #
 class TestOffsetPowerlawCurve(TestCase):

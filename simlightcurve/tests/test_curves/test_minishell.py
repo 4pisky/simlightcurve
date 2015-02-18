@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from unittest import TestCase
-from simlightcurve.solvers import find_peak, find_rise_t_offset
+from simlightcurve.solvers import find_peak, find_rise_t
 
 import simlightcurve.curves as simlc
 
@@ -24,7 +24,7 @@ class TestMinishellCurve(TestCase):
         self.assertTrue(peak_flux < 10.0)
     #
         half_peak_flux = 0.5 * peak_flux
-        half_peak_rise_time = find_rise_t_offset(lc, half_peak_flux,
+        half_peak_rise_time = find_rise_t(lc, half_peak_flux,
                                                  t_min=0, t_max=peak_t_offset)
         self.assertTrue(half_peak_rise_time < peak_t_offset)
         self.assertTrue(half_peak_rise_time > 0)

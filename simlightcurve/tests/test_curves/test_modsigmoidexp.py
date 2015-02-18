@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from unittest import TestCase
 
 from simlightcurve.curves import ModSigmoidExp
-from simlightcurve.solvers import find_peak, find_rise_t_offset
+from simlightcurve.solvers import find_peak, find_rise_t
 
 class TestSimpleModSigmoidExpCurve(TestCase):
     def shortDescription(self):
@@ -39,7 +39,7 @@ class TestSimpleModSigmoidExpCurve(TestCase):
 
         t_early = -self.rise_tau*3
 
-        half_peak_rise_time = find_rise_t_offset(lc, half_peak_flux,
+        half_peak_rise_time = find_rise_t(lc, half_peak_flux,
                                  t_min=t_early, t_max=peak_t_offset)
         # print( "Half-rise time:",half_peak_rise_time)
         self.assertTrue(half_peak_rise_time < peak_t_offset)
