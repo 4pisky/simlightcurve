@@ -1,10 +1,11 @@
 .. _ref:
 
+*************
 API Reference
-=============
+*************
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
    base
    curves

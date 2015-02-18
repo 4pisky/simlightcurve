@@ -1,5 +1,6 @@
 .. _ref_curves:
 
+
 :mod:`simlightcurve.curves`
 ===========================
 
@@ -26,4 +27,20 @@
 ---------------------------------------------------------------
 .. automodule:: simlightcurve.curves.powerlaw
     :members:
+
+
+:mod:`simlightcurve.curves.composite`
+---------------------------------------------------------------
+
+.. automodule:: simlightcurve.curves.composite.gaussexp
+    :members:
+    :undoc-members:
+
+.. automodule:: simlightcurve.curves.composite.gausspowerlaw
+    :members:
+    :undoc-members:
+
+.. automodule:: simlightcurve.curves.composite.linearexp
+    :members:
+    :undoc-members:
 

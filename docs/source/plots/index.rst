@@ -1,8 +1,8 @@
 .. _plots:
 
-
+************
 Sample plots
-============
+************
 
 .. toctree::
    :maxdepth: 2
