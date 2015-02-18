@@ -9,7 +9,7 @@ from simlightcurve.solvers import find_peak, find_rise_t_offset
 class TestSolversOnQuadratic(TestCase):
     def setUp(self):
         self.peak = 10
-        self.lc = NegativeQuadratic(self.peak)
+        self.lc = NegativeQuadratic(amplitude=self.peak)
 
     def test_input_output_dim_handling(self):
         lc = self.lc

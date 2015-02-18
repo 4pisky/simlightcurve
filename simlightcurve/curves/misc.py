@@ -5,16 +5,16 @@ from astropy.modeling import (
 from astropy.modeling.models import custom_model_1d
 
 @custom_model_1d
-def logistic_rise(t_offset, loc=0.0, scale=1.0):
-    return 1.0 / (1.0 + np.exp(-(t_offset - loc) / scale))
+def logistic_rise(t, amplitude=1.0, t0=0.0):
+    return 1.0 / (1.0 + np.exp(-( t-t0) / amplitude))
 
 @custom_model_1d
-def logistic_drop(t_offset, loc=0.0, scale=1.0):
-    return 1.0 - logistic_rise(t_offset, loc, scale)
+def logistic_drop(t, amplitude=1.0,t0=0.0):
+    return 1.0 - logistic_rise(t, amplitude, t0)
 
 @custom_model_1d
-def softplus_drop(t_offset, loc=0.0, scale=1.0):
-    return 1.0 / (1.0 + np.exp(-(t_offset - loc) / scale))
+def softplus_drop(t, amplitude=1.0, t0=0.0):
+    return 1.0 / (1.0 + np.exp(-(t - t0) / amplitude))
 
 
 class NegativeQuadratic(FittableModel):
@@ -22,14 +22,16 @@ class NegativeQuadratic(FittableModel):
     Very simple example, used for testing purposes.
     """
 
-    inputs=('t_offset',)
+    inputs=('t',)
     outputs=('flux',)
     amplitude=Parameter()
+    t0=Parameter(default=0.0)
 
     @staticmethod
-    def eval(t_offset, amplitude):
-        if np.ndim(t_offset)==0:
-            t_offset=np.asarray(t_offset,dtype=np.float).reshape((1,))
+    def eval(t, amplitude, t0):
+        if np.ndim(t)==0:
+            t=np.asarray(t,dtype=np.float).reshape((1,))
+        t_offset = t-t0
         root = np.sqrt(amplitude)
         t_valid = (t_offset > -root)& (t_offset < root)
         # print "t_offset", t_offset
@@ -41,5 +43,5 @@ class NegativeQuadratic(FittableModel):
 
 
     @format_input
-    def __call__(self, t_offset):
-        return self.eval(t_offset, *self.param_sets)
+    def __call__(self, t):
+        return self.eval(t, *self.param_sets)

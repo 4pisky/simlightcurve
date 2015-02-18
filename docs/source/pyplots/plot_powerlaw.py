@@ -14,7 +14,7 @@ hr = 60*60
 decay_tau=1.*24*hr
 rise_tau=decay_tau*0.3
 t_min = 0.1
-break_t_offset = 0.2*decay_tau
+break_one_t_offset = 0.2*decay_tau
 
 unbroken_pl = curves.Powerlaw(init_amp=1,
                               alpha_one=-0.5,
@@ -27,8 +27,8 @@ offset_pl = curves.Powerlaw(init_amp=1,
                             )
 
 broken_pl = curves.SingleBreakPowerlaw(init_amp=.1,
-                            break_t_offset=break_t_offset,
                             alpha_one=-0.2,
+                            break_one_t_offset=break_one_t_offset,
                             alpha_two=-0.8,
                             t_offset_min=t_min
                             )
@@ -42,7 +42,7 @@ fig, axes = plt.subplots(2,1)
 fig.suptitle('Powerlaws', fontsize=36)
 ax=axes[0]
 # ax.axvline(0, ls='--')
-ax.axvline(break_t_offset, ls=':')
+ax.axvline(break_one_t_offset, ls=':')
 ax.set_xlabel('Time')
 ax.set_ylabel('Flux')
 ax.plot(tsteps, unbroken_pl(tsteps), label='Unbroken powerlaw')
@@ -56,7 +56,7 @@ ax.legend()
 
 ax=axes[1]
 # ax.axvline(0, ls='--')
-ax.axvline(break_t_offset, ls=':')
+ax.axvline(break_one_t_offset, ls=':')
 ax.set_xlabel('Time')
 ax.set_ylabel('Flux')
 ax.plot(tsteps, unbroken_pl(tsteps), label='Unbroken powerlaw')

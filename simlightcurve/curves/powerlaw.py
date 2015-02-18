@@ -83,7 +83,8 @@ class Powerlaw(FittableModel):
              init_amp,
              alpha_one,
              t_offset_min,
-             t0):
+             t0
+    ):
         if np.ndim(t)==0:
             t=np.asarray(t,dtype=np.float).reshape((1,))
         t_offset = t-t0
@@ -119,32 +120,32 @@ class SingleBreakPowerlaw(FittableModel):
     deal with complex numbers. Also 0.**Y == 0. )
     """
 
-    inputs=('t',)
-    outputs=('flux',)
+    inputs = ('t',)
+    outputs = ('flux',)
 
     init_amp = Parameter()
-    break_t_offset = Parameter()
     alpha_one = Parameter()
-    alpha_two = Parameter()
     t_offset_min = Parameter(default=0.)
+    break_one_t_offset = Parameter()
+    alpha_two = Parameter()
     t0 = Parameter(default=0.)
 
     @staticmethod
     def eval(t,
              init_amp,
-             break_t_offset,
              alpha_one,
-             alpha_two,
              t_offset_min,
+             break_one_t_offset,
+             alpha_two,
              t0
-             ):
-        if np.ndim(t)==0:
-            t=np.asarray(t,dtype=np.float).reshape((1,))
-        t_offset = t-t0
+    ):
+        if np.ndim(t) == 0:
+            t = np.asarray(t, dtype=np.float).reshape((1,))
+        t_offset = t - t0
         bounds, alphas, amps = _calculate_powerlaw_break_amplitudes(
-            init_amp,alpha_one,t_offset_min,
-            breaks={break_t_offset[0]:alpha_two[0]})
-        return _evaluate_broken_powerlaw(t_offset, bounds,alphas,amps)
+            init_amp, alpha_one, t_offset_min,
+            breaks={break_one_t_offset[0]: alpha_two[0]})
+        return _evaluate_broken_powerlaw(t_offset, bounds, alphas, amps)
 
     @format_input
     def __call__(self, t):

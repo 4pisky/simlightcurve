@@ -7,18 +7,19 @@ class LinearExp(FittableModel):
     inputs=('t',)
     outputs=('flux',)
 
+    amplitude = Parameter()
     rise_time = Parameter()
     decay_tau = Parameter()
-    amplitude = Parameter()
     t0 = Parameter(default=0.)
 
 
     @staticmethod
     def eval(t,
+             amplitude,
              rise_time,
              decay_tau,
-             amplitude,
-             t0):
+             t0
+    ):
         if np.ndim(t)==0:
             t=np.asarray(t,dtype=np.float).reshape((1,))
         t_offset = t-t0

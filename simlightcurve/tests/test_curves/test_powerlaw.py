@@ -36,8 +36,8 @@ class TestPowerlawCurve(TestCase):
         case where we maintain a linear slope.
         """
         lc = SingleBreakPowerlaw(init_amp=1,
-                                 break_t_offset=1.0,
                                  alpha_one=1.,
+                                 break_one_t_offset=1.0,
                                  alpha_two=1.0)
 
         # Check negative handled
@@ -51,11 +51,12 @@ class TestPowerlawCurve(TestCase):
 class TestPowerlawValueSolvers(TestCase):
     def setUp(self):
         self.lc = SingleBreakPowerlaw(
-                    init_amp=1.0,
-                    break_t_offset=1.0,
-                    alpha_one=1,
-                    alpha_two=-2)
-#
+            init_amp=1.0,
+            alpha_one=1,
+            break_one_t_offset=1.0,
+            alpha_two=-2
+        )
+    #
     def test_peak_flux(self):
         self.assertAlmostEqual(self.lc(1), 1.0)
         peak_t_offset, peak_flux = find_peak(self.lc, t_init=0)
@@ -93,8 +94,8 @@ class TestOffsetPowerlawCurve(TestCase):
         case where we maintain a linear slope.
         """
         lc = SingleBreakPowerlaw(init_amp=1,
-                                 break_t_offset=1.0,
                                  alpha_one=1.,
+                                 break_one_t_offset=1.0,
                                  alpha_two=1.0,
                                  t_offset_min=1.0)
 

@@ -8,17 +8,17 @@ class GaussExp(FittableModel):
     inputs=('t',)
     outputs=('flux',)
 
+    amplitude = Parameter()
     rise_tau = Parameter()
     decay_tau = Parameter()
-    amplitude = Parameter()
     t0 = Parameter(default=0.)
 
 
     @staticmethod
     def eval(t,
+             amplitude,
              rise_tau,
              decay_tau,
-             amplitude,
              t0):
         if np.ndim(t)==0:
             t=np.asarray(t,dtype=np.float).reshape((1,))

@@ -16,14 +16,16 @@ rise_tau=decay_tau*0.3
 t1_offset = decay_tau
 
 fred = curves.LinearExp(
+    amplitude=1.0,
     rise_time=rise_tau*1.5,
     decay_tau=decay_tau,
-    amplitude=1.0)
+)
 
 gred = curves.GaussExp(
+            amplitude=1.0,
             rise_tau=rise_tau,
             decay_tau=decay_tau,
-            amplitude=1.0)
+)
 
 grpld = curves.GaussPowerlaw(
     amplitude = 1.0,
