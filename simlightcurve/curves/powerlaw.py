@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division
 import numpy as np
-from astropy.modeling import FittableModel, Parameter, format_input
+from astropy.modeling import FittableModel, Parameter
 
 
 
@@ -79,7 +79,7 @@ class Powerlaw(FittableModel):
     t0 = Parameter(default=0.)
 
     @staticmethod
-    def eval(t,
+    def evaluate(t,
              init_amp,
              alpha_one,
              t_offset_min,
@@ -93,9 +93,6 @@ class Powerlaw(FittableModel):
         result[t_valid] = ( init_amp* np.power(t_offset[t_valid], alpha_one))
         return result
 
-    @format_input
-    def __call__(self, t):
-        return self.eval(t, *self.param_sets)
 
 
 class SingleBreakPowerlaw(FittableModel):
@@ -125,18 +122,18 @@ class SingleBreakPowerlaw(FittableModel):
 
     init_amp = Parameter()
     alpha_one = Parameter()
-    t_offset_min = Parameter(default=0.)
     break_one_t_offset = Parameter()
     alpha_two = Parameter()
+    t_offset_min = Parameter(default=0.)
     t0 = Parameter(default=0.)
 
     @staticmethod
-    def eval(t,
+    def evaluate(t,
              init_amp,
              alpha_one,
-             t_offset_min,
              break_one_t_offset,
              alpha_two,
+             t_offset_min,
              t0
     ):
         if np.ndim(t) == 0:
@@ -146,7 +143,3 @@ class SingleBreakPowerlaw(FittableModel):
             init_amp, alpha_one, t_offset_min,
             breaks={break_one_t_offset[0]: alpha_two[0]})
         return _evaluate_broken_powerlaw(t_offset, bounds, alphas, amps)
-
-    @format_input
-    def __call__(self, t):
-        return self.eval(t, *self.param_sets)

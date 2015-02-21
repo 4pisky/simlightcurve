@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division
 import numpy as np
-from astropy.modeling import FittableModel, Parameter, format_input
+from astropy.modeling import FittableModel, Parameter
 
 
 class ModSigmoidExp(FittableModel):
@@ -25,7 +25,7 @@ class ModSigmoidExp(FittableModel):
 
 
     @staticmethod
-    def eval(t,
+    def evaluate(t,
              a,
              b,
              t1_minus_t0,
@@ -39,7 +39,3 @@ class ModSigmoidExp(FittableModel):
         exp_num = np.exp(-t_offset / decay_tau)
         exp_denom = 1 + np.exp(-t_offset / rise_tau)
         return a*b_fac*exp_num/exp_denom
-
-    @format_input
-    def __call__(self, t):
-        return self.eval(t, *self.param_sets)

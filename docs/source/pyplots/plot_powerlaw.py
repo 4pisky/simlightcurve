@@ -18,7 +18,8 @@ break_one_t_offset = 0.2*decay_tau
 
 unbroken_pl = curves.Powerlaw(init_amp=1,
                               alpha_one=-0.5,
-                              t_offset_min=t_min)
+                              t_offset_min=t_min,
+                              t0=None)
 
 offset_pl = curves.Powerlaw(init_amp=1,
                             alpha_one=-0.5,
@@ -30,7 +31,8 @@ broken_pl = curves.SingleBreakPowerlaw(init_amp=.1,
                             alpha_one=-0.2,
                             break_one_t_offset=break_one_t_offset,
                             alpha_two=-0.8,
-                            t_offset_min=t_min
+                            t_offset_min=t_min,
+                            t0=None
                             )
 
 

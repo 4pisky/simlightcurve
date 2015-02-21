@@ -19,12 +19,14 @@ fred = curves.LinearExp(
     amplitude=1.0,
     rise_time=rise_tau*1.5,
     decay_tau=decay_tau,
+    t0=None
 )
 
 gred = curves.GaussExp(
             amplitude=1.0,
             rise_tau=rise_tau,
             decay_tau=decay_tau,
+            t0=None
 )
 
 grpld = curves.GaussPowerlaw(
@@ -32,8 +34,7 @@ grpld = curves.GaussPowerlaw(
     rise_tau=rise_tau,
     decay_alpha=-1.5,
     decay_offset=decay_tau,
-    # breaks={0.1*decay_tau:-.1,
-    #         0.5*decay_tau:-.5}
+    t0=None
 )
 
 tsteps = np.arange(-rise_tau*3, decay_tau*5, 30)

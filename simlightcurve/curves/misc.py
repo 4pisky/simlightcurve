@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import numpy as np
 from astropy.modeling import (
-    FittableModel, Parameter, format_input)
+    FittableModel, Parameter)
 from astropy.modeling.models import custom_model_1d
 
 @custom_model_1d
@@ -28,7 +28,7 @@ class NegativeQuadratic(FittableModel):
     t0=Parameter(default=0.0)
 
     @staticmethod
-    def eval(t, amplitude, t0):
+    def evaluate(t, amplitude, t0):
         if np.ndim(t)==0:
             t=np.asarray(t,dtype=np.float).reshape((1,))
         t_offset = t-t0
@@ -40,8 +40,3 @@ class NegativeQuadratic(FittableModel):
         vals[t_valid] = amplitude - t_offset[t_valid]**2
         return vals
         # return amplitude - t_offset**2
-
-
-    @format_input
-    def __call__(self, t):
-        return self.eval(t, *self.param_sets)

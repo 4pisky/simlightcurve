@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import numpy as np
 
-from astropy.modeling import FittableModel, Parameter, format_input
+from astropy.modeling import FittableModel, Parameter
 
 class Minishell(FittableModel):
     """
@@ -40,7 +40,7 @@ class Minishell(FittableModel):
         return factor_evolve*factor_tau_external*factor_tau_csm_clump
 
     @staticmethod
-    def eval(t,k1,k2,k3,beta,delta1,delta2,t0):
+    def evaluate(t,k1,k2,k3,beta,delta1,delta2,t0):
         """
         Wraps _curve function to only process values at t > 0
         """
@@ -50,6 +50,3 @@ class Minishell(FittableModel):
         vals[t_valid] = Minishell._curve(t_offset[t_valid],k1,k2,k3,beta,delta1,delta2)
         return vals
 
-    @format_input
-    def __call__(self, t):
-        return self.eval(t, *self.param_sets)

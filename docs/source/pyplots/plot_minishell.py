@@ -15,7 +15,8 @@ hr=3600.0
 timespan = 1000.
 tsteps = np.linspace(-1,timespan,24*hr)
 afterglow = Minishell(k1=2.5e2, k2=1.38e2, k3=1.47e5,
-                      beta=-1.5, delta1=-2.56, delta2=-2.69)
+                      beta=-1.5, delta1=-2.56, delta2=-2.69,
+                      t0=None)
 
 fig, axes = plt.subplots(1,1)
 fig.suptitle('SNe radio lightcurve', fontsize=36)

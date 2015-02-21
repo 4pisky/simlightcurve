@@ -18,7 +18,7 @@ class TestPowerlawCurve(TestCase):
         """
         Test the basic interface all works for a simple case.
         """
-        lc = Powerlaw(init_amp=1, alpha_one=1)
+        lc = Powerlaw(init_amp=1, alpha_one=1, t_offset_min=None, t0=None)
         # Check negative handled by LightcurveBase
         self.assertEqual(lc(-1), 0.0)
         self.assertEqual(lc(1.0), 1.0)
@@ -38,7 +38,9 @@ class TestPowerlawCurve(TestCase):
         lc = SingleBreakPowerlaw(init_amp=1,
                                  alpha_one=1.,
                                  break_one_t_offset=1.0,
-                                 alpha_two=1.0)
+                                 alpha_two=1.0,
+                                 t_offset_min=None,
+                                 t0=None)
 
         # Check negative handled
         self.assertEqual(lc(-1), 0.0)
@@ -54,7 +56,9 @@ class TestPowerlawValueSolvers(TestCase):
             init_amp=1.0,
             alpha_one=1,
             break_one_t_offset=1.0,
-            alpha_two=-2
+            alpha_two=-2,
+            t_offset_min=None,
+            t0=None
         )
     #
     def test_peak_flux(self):
@@ -76,7 +80,7 @@ class TestOffsetPowerlawCurve(TestCase):
         """
         Test the basic interface all works for a simple case.
         """
-        lc = Powerlaw(init_amp=1, alpha_one=1, t_offset_min=1.0)
+        lc = Powerlaw(init_amp=1, alpha_one=1, t_offset_min=1.0, t0=None)
         # Check negative handled by LightcurveBase
         self.assertEqual(lc(-1), 0.0)
         self.assertEqual(lc(1.01), 1.01)
@@ -97,7 +101,8 @@ class TestOffsetPowerlawCurve(TestCase):
                                  alpha_one=1.,
                                  break_one_t_offset=1.0,
                                  alpha_two=1.0,
-                                 t_offset_min=1.0)
+                                 t_offset_min=1.0,
+                                 t0=None)
 
         # Check negative handled by LightcurveBase
         self.assertEqual(lc(-1), 0.0)

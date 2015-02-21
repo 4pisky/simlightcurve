@@ -16,7 +16,8 @@ class TestSimpleModSigmoidExpCurve(TestCase):
         self.lc = ModSigmoidExp(a=1., b=0,
                                 t1_minus_t0=0.0,
                                rise_tau=self.rise_tau,
-                               decay_tau=self.decay_tau, )
+                               decay_tau=self.decay_tau,
+                                t0=None)
 
     def test_values(self):
         self.assertAlmostEqual(self.lc(0), 0.5)

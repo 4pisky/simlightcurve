@@ -11,7 +11,8 @@ class TestMinishellCurve(TestCase):
 
     def setUp(self):
         self.lc = simlc.Minishell(k1=2.5e2, k2=1.38e2, k3=1.47e5, beta=-1.5,
-                                           delta1=-2.56, delta2=-2.69)
+                                           delta1=-2.56, delta2=-2.69,
+                                           t0=None)
     def test_instantiation(self):
         self.assertEqual(self.lc(0),0.0)
 

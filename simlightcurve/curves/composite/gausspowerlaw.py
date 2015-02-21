@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division
 import numpy as np
-from astropy.modeling import FittableModel, Parameter, format_input
+from astropy.modeling import FittableModel, Parameter
 from simlightcurve.curves.powerlaw import Powerlaw
 
 
@@ -17,7 +17,7 @@ class GaussPowerlaw(FittableModel):
 
 
     @staticmethod
-    def eval(t, amplitude, rise_tau,
+    def evaluate(t, amplitude, rise_tau,
              decay_alpha, decay_offset,
              t0):
         t_offset = t-t0
@@ -29,13 +29,10 @@ class GaussPowerlaw(FittableModel):
                                 (2. * rise_tau * rise_tau))
 
         pl_multiplier = 1.0/(decay_offset**decay_alpha)
-        vals[fall_idx] = Powerlaw.eval(t_offset[fall_idx],
+        vals[fall_idx] = Powerlaw.evaluate(t_offset[fall_idx],
                                        init_amp=pl_multiplier,
                                        alpha_one=decay_alpha,
                                        t_offset_min=decay_offset,
                                        t0=-1.0*decay_offset)
         return amplitude*vals
 
-    @format_input
-    def __call__(self, t):
-        return self.eval(t, *self.param_sets)

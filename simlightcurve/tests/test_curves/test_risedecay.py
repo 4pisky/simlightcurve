@@ -16,9 +16,10 @@ class TestLinearRiseExpDecay(TestCase):
         self.decay_tau = 10 * 60 * 60
         self.amplitude = 1
         self.lc = simlc.LinearExp(
+            amplitude=self.amplitude,
             rise_time=self.rise_time,
             decay_tau=self.decay_tau,
-            amplitude=self.amplitude)
+            t0=None)
 
     def test_rising_flux(self):
         # Check out of bounds handled correctly
@@ -43,9 +44,11 @@ class TestGaussRiseExpDecay(TestCase):
         self.decay_tau = 10 * 60 * 60
         self.amplitude = 1.0
         self.lc = simlc.GaussExp(
+            amplitude=self.amplitude,
             rise_tau=self.rise_tau,
             decay_tau=self.decay_tau,
-            amplitude=self.amplitude)
+            t0=None
+        )
 
     def test_amplitude(self):
         self.assertEqual(self.lc([0]), self.amplitude)

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division
 import numpy as np
-from astropy.modeling import FittableModel, Parameter, format_input
+from astropy.modeling import FittableModel, Parameter
 
 
 class LinearExp(FittableModel):
@@ -14,7 +14,7 @@ class LinearExp(FittableModel):
 
 
     @staticmethod
-    def eval(t,
+    def evaluate(t,
              amplitude,
              rise_time,
              decay_tau,
@@ -31,6 +31,3 @@ class LinearExp(FittableModel):
         return amplitude*vals
 
 
-    @format_input
-    def __call__(self, t):
-        return self.eval(t, *self.param_sets)
