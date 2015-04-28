@@ -1,6 +1,6 @@
 #Basics
-numpy
 matplotlib
 nose
 scipy
+astropy
 
