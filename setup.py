@@ -5,7 +5,9 @@ from setuptools import setup, find_packages
 required=['numpy',
           'scipy',
           'astropy',
-          'matplotlib', # Only need for doc-plots, but we unit-test these!
+          # Only need for doc-plots, but we unit-test these:
+          'matplotlib',
+          'seaborn',
           ]
 
 
