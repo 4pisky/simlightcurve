@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setup(
     name="simlightcurve",
-    version="alpha1",
-    packages=['simlightcurve', 'simlightcurve.tests'], 
+    version="0.1a1",
+    packages=find_packages(),
     description="Simple simulated lightcurve generation",
     author="Tim Staley",
     author_email="timstaley337@gmail.com",
