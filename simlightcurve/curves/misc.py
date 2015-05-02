@@ -10,7 +10,7 @@ def logistic_rise(t, amplitude=1.0, t0=0.0):
 
 @custom_model_1d
 def logistic_drop(t, amplitude=1.0,t0=0.0):
-    return 1.0 - logistic_rise(t, amplitude, t0)
+    return 1.0 - logistic_rise.evaluate(t, amplitude, t0)
 
 @custom_model_1d
 def softplus_drop(t, amplitude=1.0, t0=0.0):
