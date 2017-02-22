@@ -1,0 +1,12 @@
+[run]
+branch = True
+omit=
+    src/simlightcurve/_version.py
+source=
+    simlightcurve
+
+[paths]
+source =
+   src/simlightcurve
+   .tox/*/lib/python*/site-packages/simlightcurve
+   .tox/pypy/site-packages/simlightcurve

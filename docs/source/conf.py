@@ -31,7 +31,7 @@ copyright = u'2015, Tim Staley'
 
 
 # The short X.Y version.
-version = simlightcurve._nominal_version
+version = simlightcurve.__version__
 # The full version, including alpha/beta/rc tags.
 release = version
 

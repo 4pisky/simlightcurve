@@ -2,17 +2,17 @@ from __future__ import absolute_import
 import numpy as np
 from astropy.modeling import (
     FittableModel, Parameter)
-from astropy.modeling.models import custom_model_1d
+from astropy.modeling.models import custom_model
 
-@custom_model_1d
+@custom_model
 def logistic_rise(t, amplitude=1.0, t0=0.0):
     return 1.0 / (1.0 + np.exp(-( t-t0) / amplitude))
 
-@custom_model_1d
+@custom_model
 def logistic_drop(t, amplitude=1.0,t0=0.0):
     return 1.0 - logistic_rise.evaluate(t, amplitude, t0)
 
-@custom_model_1d
+@custom_model
 def softplus_drop(t, amplitude=1.0, t0=0.0):
     return 1.0 / (1.0 + np.exp(-(t - t0) / amplitude))
 

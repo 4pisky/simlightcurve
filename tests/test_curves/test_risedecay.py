@@ -1,11 +1,11 @@
 from __future__ import absolute_import
-import datetime
-from datetime import timedelta
-from unittest import TestCase
+
 import math
+from unittest import TestCase
+
 import scipy.stats
 import simlightcurve.curves as simlc
-
+from pytest import approx
 
 class TestLinearRiseExpDecay(TestCase):
     def shortDescription(self):
@@ -64,5 +64,5 @@ class TestGaussRiseExpDecay(TestCase):
     def test_decay_flux(self):
         self.assertEqual(self.lc([self.decay_tau]),
                          self.amplitude / math.exp(1.0))
-        self.assertAlmostEqual(self.lc([1.5 * self.decay_tau]),
-                               self.amplitude / math.exp(1.5))
+        assert (self.lc([1.5 * self.decay_tau]) ==
+                approx(self.amplitude / math.exp(1.5)))

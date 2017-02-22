@@ -1,6 +1,0 @@
-#Basics
-matplotlib
-nose
-scipy
-astropy
-
