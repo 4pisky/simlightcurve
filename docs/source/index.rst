@@ -12,7 +12,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   plots/index
+   examples/index
    reference/index
 
 

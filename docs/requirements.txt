@@ -1,4 +1,9 @@
+jupyter
 matplotlib
 seaborn
+# NB Seaborn requires pandas, but has... unconventional views on install_requires
+# cf https://github.com/mwaskom/seaborn/issues/169
+pandas
 sphinx_rtd_theme
-sphinxcontrib-napoleon
+sphinx>=1.4
+nbsphinx

@@ -7,9 +7,6 @@ import versioneer
 install_requires = ['numpy',
                     'scipy',
                     'astropy',
-                    # Only need for doc-plots, but we unit-test these:
-                    'matplotlib',
-                    'seaborn',
                     ]
 
 test_requires = [
@@ -33,4 +30,5 @@ setup(
     author_email="github@timstaley.co.uk",
     url="https://github.com/timstaley/simlightcurve",
     install_requires=install_requires,
+    extras_require=extras_require,
 )
