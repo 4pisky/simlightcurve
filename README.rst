@@ -21,23 +21,19 @@ be used to fit the lightcurves of astronomical transients.
 The feature-set we're aiming for are as follows:
 
 * A well-documented and consistent interface, so it's easy for end-users to
-install and get started.
+  install and get started.
 * Well-referenced - whenever appropriate, links to the papers defining the
-function are provided.
+  function are provided.
 * Performant - lightcurve evaluations should be as fast as possible to enable
-use on large data-sets, or under MCMC evaluation, etc. Initially this means
-writing numpy-evaluated functions, in the long run it may mean exploration of
-alternative optimizations [#]_.
+  use on large data-sets, or under MCMC evaluation, etc. Initially this means
+  writing numpy-evaluated functions, in the long run it may mean exploration of
+  alternative optimizations.
 * Make use of the astropy.modeling package, to leverage existing functionality
-there.
+  there.
 * Minimal - just the functions and perhaps the basic fitting functionality from
-astropy are provided - this package is 'agnostic' about how the lightcurves are
-used to analyse data, which should make it more widely reusable [#]_.
-
-.. [#]: We'll need to set up some benchmarks first of course.
-.. [#]: We expect to develop a companion package that
-utilises emcee to perform MCMC fitting of lightcurves to data, with
-accompanying parameter posterior distributions.
+  astropy are provided - this package is 'agnostic' about how the lightcurves
+  are used to analyse data, which should make it more widely reusable (for
+  example with various MCMC packages).
 
 
 
