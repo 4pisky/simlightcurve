@@ -8,3 +8,4 @@ from simlightcurve.curves.misc import NegativeQuadratic
 from simlightcurve.curves.composite.linearexp import LinearExp
 from simlightcurve.curves.composite.gaussexp import GaussExp
 from simlightcurve.curves.composite.gausspowerlaw import GaussPowerlaw
+from simlightcurve.curves.composite.vdl import vdl
