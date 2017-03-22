@@ -30,10 +30,11 @@ The feature-set we're aiming for are as follows:
   alternative optimizations.
 * Make use of the astropy.modeling package, to leverage existing functionality
   there.
-* Minimal - just the functions and perhaps the basic fitting functionality from
-  astropy are provided - this package is 'agnostic' about how the lightcurves
-  are used to analyse data, which should make it more widely reusable (for
-  example with various MCMC packages).
+* Minimal - just the functions and some basic utility routines are provided -
+  this package is 'agnostic' about how the lightcurves are used to analyse data,
+  which should make it more widely reusable (for example with various MCMC
+  packages).
+
 
 
 
