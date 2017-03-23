@@ -63,7 +63,7 @@ class Powerlaw(FittableModel):
 
         amplitude * (t_offset)**alpha
 
-    We wary of using an init_alpha<0, since this results in an asymptote at
+    Be wary of using an init_alpha<0, since this results in an asymptote at
     t=0.
 
     NB  The curve will always begin at the origin, because maths.
