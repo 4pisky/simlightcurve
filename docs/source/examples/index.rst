@@ -10,3 +10,4 @@ Example notebooks:
    powerlaw
    supernovae
    rise_decay
+   vanderlaan
